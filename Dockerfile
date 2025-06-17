@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     sqlite3
 
 # Cài PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring zip exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pdo_sqlite mbstring zip exif pcntl bcmath gd
 
 # Cài Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -29,10 +29,14 @@ COPY . .
 # Cài Laravel dependencies
 RUN composer install
 
-# Tạo file .env từ .env.example
-RUN cp .env.example .env && \
-    php artisan key:generate
+# Tạo file .env và app key
+RUN cp .env.example .env && php artisan key:generate
 
+# 👉 Tạo file SQLite trống
+RUN mkdir -p database && touch database/database.sqlite
+
+# 👉 CHẠY migrate để tạo bảng courses và các bảng khác
+RUN php artisan migrate --force
 
 # Quyền truy cập
 RUN chown -R www-data:www-data /var/www
