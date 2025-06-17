@@ -20,28 +20,21 @@ RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pdo_sqlite mbstring zip exif 
 # Cài Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set thư mục làm việc
+# Đặt thư mục làm việc
 WORKDIR /var/www
 
-# Copy toàn bộ code Laravel vào container
+# Copy toàn bộ source Laravel vào container
 COPY . .
 
 # Cài Laravel dependencies
 RUN composer install
 
-# Tạo file .env và app key
-RUN cp .env.example .env && php artisan key:generate
-
-# 👉 Tạo file SQLite trống
-RUN mkdir -p database && touch database/database.sqlite
-
-# 👉 CHẠY migrate để tạo bảng courses và các bảng khác
-RUN php artisan migrate --force
-
-# Quyền truy cập
+# Gán quyền truy cập
 RUN chown -R www-data:www-data /var/www
 
-# Chạy Laravel
-#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Copy entrypoint script và gán quyền chạy
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
+# Khởi chạy Laravel thông qua script
+CMD ["/entrypoint.sh"]
