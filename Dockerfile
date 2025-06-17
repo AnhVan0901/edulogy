@@ -29,8 +29,10 @@ COPY . .
 # Cài Laravel dependencies
 RUN composer install
 
-# Tạo APP_KEY
-RUN php artisan key:generate
+# Tạo file .env từ .env.example
+RUN cp .env.example .env && \
+    php artisan key:generate
+
 
 # Quyền truy cập
 RUN chown -R www-data:www-data /var/www
