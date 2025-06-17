@@ -42,4 +42,6 @@ RUN php artisan migrate --force
 RUN chown -R www-data:www-data /var/www
 
 # Chạy Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+#CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+
