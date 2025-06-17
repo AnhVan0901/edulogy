@@ -6,9 +6,10 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
+/*
 Route::get('/', function () {
     return view('welcome');
-});
+});*/
 
 Route::get('/db-export', function () {
     $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
@@ -26,6 +27,6 @@ Route::get('/db-export', function () {
     return response()->json($export);
 });
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/courses', [CourseFullController::class, 'index'])->name('courses.index');
 
